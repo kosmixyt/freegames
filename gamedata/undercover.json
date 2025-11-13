@@ -1,0 +1,84 @@
+{
+  "topics": [
+    {
+      "word": "Pizza",
+      "fake": "Burger"
+    },
+    {
+      "word": "Chat",
+      "fake": "Chien"
+    },
+    {
+      "word": "Soleil",
+      "fake": "Lune"
+    },
+    {
+      "word": "Voiture",
+      "fake": "Moto"
+    },
+    {
+      "word": "Pomme",
+      "fake": "Orange"
+    },
+    {
+      "word": "Montagne",
+      "fake": "Plage"
+    },
+    {
+      "word": "Livres",
+      "fake": "Films"
+    },
+    {
+      "word": "Café",
+      "fake": "Thé"
+    },
+    {
+      "word": "Guitare",
+      "fake": "Piano"
+    },
+    {
+      "word": "Mer",
+      "fake": "Rivière"
+    },
+    {
+      "word": "Roi",
+      "fake": "Président"
+    },
+    {
+      "word": "Dragon",
+      "fake": "Phénix"
+    },
+    {
+      "word": "Caméra",
+      "fake": "Appareil photo"
+    },
+    {
+      "word": "Léopard",
+      "fake": "Tigre"
+    },
+    {
+      "word": "Émeraude",
+      "fake": "Rubis"
+    },
+    {
+      "word": "Astronaute",
+      "fake": "Cosmonaute"
+    },
+    {
+      "word": "Diamant",
+      "fake": "Cristal"
+    },
+    {
+      "word": "Forêt",
+      "fake": "Jungle"
+    },
+    {
+      "word": "Vaisseau spatial",
+      "fake": "Hélicoptère"
+    },
+    {
+      "word": "Couronne",
+      "fake": "Tiare"
+    }
+  ]
+}

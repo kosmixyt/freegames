@@ -8,6 +8,7 @@ import {
   Link,
   useLocation,
 } from "react-router";
+import { useState } from "react";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -43,57 +44,100 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Sidebar() {
+function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <aside className="w-64 h-screen bg-gray-900 text-white border-l border-gray-700 fixed right-0 top-0 flex flex-col shadow-lg">
-      {/* Header */}
-      <div className="p-6 border-b border-gray-700">
-        <h1 className="text-2xl font-bold">FreeGames</h1>
-      </div>
+    <>
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 md:hidden z-30"
+          onClick={onClose}
+        />
+      )}
 
-      {/* Navigation */}
-      <nav className="flex-1 p-6 space-y-3">
-        <Link
-          to="/"
-          className={`block px-4 py-2 rounded-md transition ${
-            isActive("/")
-              ? "bg-blue-600 text-white"
-              : "text-gray-300 hover:bg-gray-800"
-          }`}
-        >
-          Accueil
-        </Link>
-        <Link
-          to="/users"
-          className={`block px-4 py-2 rounded-md transition ${
-            isActive("/users")
-              ? "bg-blue-600 text-white"
-              : "text-gray-300 hover:bg-gray-800"
-          }`}
-        >
-          Utilisateurs
-        </Link>
-      </nav>
+      {/* Sidebar */}
+      <aside
+        className={`w-72 h-screen bg-linear-to-b from-slate-900 to-slate-950 text-white border-l border-slate-800 fixed right-0 top-0 flex flex-col shadow-2xl transition-transform duration-300 z-40 md:translate-x-0 ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        } md:relative md:translate-x-0`}
+      >
+        {/* Header */}
+        <div className="p-4 md:p-6 border-b border-slate-800 bg-linear-to-r from-violet-600 to-purple-600 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight">🎮 FreeGames</h1>
+            <p className="text-xs md:text-sm text-purple-200 mt-1">Votre hub de jeux gratuits</p>
+          </div>
+          {/* Close button for mobile */}
+          <button
+            onClick={onClose}
+            className="md:hidden text-white text-2xl hover:text-purple-200 transition-colors"
+          >
+            ✕
+          </button>
+        </div>
 
-      {/* Footer */}
-      <div className="p-6 border-t border-gray-700 text-sm text-gray-400">
-        <p>© 2025 FreeGames</p>
-      </div>
-    </aside>
+        {/* Navigation */}
+        <nav className="flex-1 p-4 md:p-6 space-y-2">
+          <Link
+            to="/"
+            onClick={onClose}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              isActive("/")
+                ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg"
+                : "text-slate-300 hover:bg-slate-800 hover:text-white"
+            }`}
+          >
+            <span className="text-lg">🏠</span>
+            <span className="font-semibold">Accueil</span>
+          </Link>
+          <Link
+            to="/users"
+            onClick={onClose}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              isActive("/users")
+                ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg"
+                : "text-slate-300 hover:bg-slate-800 hover:text-white"
+            }`}
+          >
+            <span className="text-lg">👥</span>
+            <span className="font-semibold">Utilisateurs</span>
+          </Link>
+        </nav>
+
+        {/* Footer */}
+        <div className="p-4 md:p-6 border-t border-slate-800 bg-slate-900/50">
+          <p className="text-xs text-slate-500 text-center">© 2025 FreeGames</p>
+          <p className="text-xs text-slate-600 text-center mt-1">v1.0.0</p>
+        </div>
+      </aside>
+    </>
   );
 }
 
 export default function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="flex">
-      <main className="flex-1 mr-64 min-h-screen">
+    <div className="flex flex-col md:flex-row">
+      {/* Mobile Header */}
+      <header className="md:hidden bg-linear-to-r from-violet-600 to-purple-600 text-white p-4 flex items-center justify-between sticky top-0 z-20 shadow-lg">
+        <h1 className="text-xl font-black">🎮 FreeGames</h1>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="text-white text-2xl hover:text-purple-200 transition-colors"
+        >
+          ☰
+        </button>
+      </header>
+
+      <main className="flex-1 w-full min-h-screen md:mr-72">
         <Outlet />
       </main>
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
     </div>
   );
 }

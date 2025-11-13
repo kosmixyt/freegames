@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Route } from "./+types/users";
 
-const STORAGE_KEY = "freegames_users";
-
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Gestion des utilisateurs" },
@@ -13,30 +11,24 @@ export function meta({}: Route.MetaArgs) {
 export default function Users() {
   const [users, setUsers] = useState<string[]>([]);
   const [newUser, setNewUser] = useState("");
-  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load users from localStorage on mount
+  // Charger les utilisateurs depuis le localStorage au montage
   useEffect(() => {
-    const savedUsers = localStorage.getItem(STORAGE_KEY);
+    const savedUsers = localStorage.getItem("users");
     if (savedUsers) {
-      try {
-        setUsers(JSON.parse(savedUsers));
-      } catch (error) {
-        console.error("Erreur lors du chargement des utilisateurs:", error);
-        setUsers(["Alice", "Bob", "Charlie"]);
-      }
+      setUsers(JSON.parse(savedUsers));
     } else {
-      setUsers(["Alice", "Bob", "Charlie"]);
+      // Utilisateurs par défaut
+      const defaultUsers = ["Alice", "Bob", "Charlie"];
+      setUsers(defaultUsers);
+      localStorage.setItem("users", JSON.stringify(defaultUsers));
     }
-    setIsLoaded(true);
   }, []);
 
-  // Save users to localStorage whenever they change
+  // Sauvegarder les utilisateurs dans le localStorage à chaque changement
   useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-    }
-  }, [users, isLoaded]);
+    localStorage.setItem("users", JSON.stringify(users));
+  }, [users]);
 
   const addUser = () => {
     if (newUser.trim()) {
@@ -50,51 +42,76 @@ export default function Users() {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
-        Gestion des utilisateurs
-      </h2>
-
-      {/* Form to add user */}
-      <div className="flex gap-2 mb-6">
-        <input
-          type="text"
-          value={newUser}
-          onChange={(e) => setNewUser(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && addUser()}
-          placeholder="Ajouter un utilisateur"
-          className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-800 dark:text-white text-sm"
-        />
-        <button
-          onClick={addUser}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm font-medium"
-        >
-          Ajouter
-        </button>
+    <div className="min-h-screen">
+      {/* Header */}
+      <div className="bg-linear-to-r from-violet-600 via-purple-600 to-pink-600 text-white py-8 md:py-10 px-4 md:px-8">
+        <h1 className="text-3xl md:text-4xl font-black mb-2">👥 Gestion des utilisateurs</h1>
+        <p className="text-sm md:text-base text-purple-100">Gérez vos utilisateurs et votre équipe</p>
       </div>
 
-      {/* Users list */}
-      <div className="flex-1 overflow-y-auto space-y-2">
-        {users.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Aucun utilisateur
-          </p>
-        ) : (
-          users.map((user, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 rounded-md"
+      {/* Content */}
+      <div className="p-4 md:p-8 max-w-2xl mx-auto w-full">
+        {/* Form to add user */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-4 md:p-6 mb-6 md:mb-8 border border-slate-200 dark:border-slate-700">
+          <h2 className="text-base md:text-lg font-bold text-slate-900 dark:text-white mb-4">Ajouter un nouvel utilisateur</h2>
+          <div className="flex flex-col md:flex-row gap-3">
+            <input
+              type="text"
+              value={newUser}
+              onChange={(e) => setNewUser(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && addUser()}
+              placeholder="Entrez le nom d'utilisateur"
+              className="flex-1 px-4 py-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg dark:bg-slate-700 dark:text-white text-slate-900 placeholder-slate-500 dark:placeholder-slate-400 focus:border-violet-600 focus:outline-none transition-colors text-sm md:text-base"
+            />
+            <button
+              onClick={addUser}
+              className="px-6 py-3 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-lg hover:from-violet-700 hover:to-purple-700 font-semibold transition-all duration-200 shadow-md hover:shadow-lg shrink-0 text-sm md:text-base"
             >
-              <span className="text-gray-800 dark:text-white">{user}</span>
-              <button
-                onClick={() => deleteUser(index)}
-                className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
-              >
-                Supprimer
-              </button>
+              Ajouter
+            </button>
+          </div>
+        </div>
+
+        {/* Users list */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+          <div className="px-4 md:px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+            <h2 className="text-base md:text-lg font-bold text-slate-900 dark:text-white">
+              Utilisateurs ({users.length})
+            </h2>
+          </div>
+
+          {users.length === 0 ? (
+            <div className="p-6 md:p-8 text-center">
+              <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg">😴 Aucun utilisateur pour le moment</p>
+              <p className="text-xs md:text-sm text-slate-400 dark:text-slate-500 mt-2">Ajoutez votre premier utilisateur ci-dessus</p>
             </div>
-          ))
-        )}
+          ) : (
+            <ul className="divide-y divide-slate-200 dark:divide-slate-700">
+              {users.map((user, index) => (
+                <li
+                  key={index}
+                  className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200 gap-3 md:gap-0"
+                >
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-linear-to-br from-violet-500 to-purple-500 flex items-center justify-center text-white font-bold shrink-0">
+                      {user.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-slate-900 dark:text-white text-sm md:text-base truncate">{user}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Utilisateur</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => deleteUser(index)}
+                    className="px-3 py-2 bg-red-500 text-white rounded-lg text-xs md:text-sm font-medium hover:bg-red-600 transition-colors duration-200 shadow-sm hover:shadow-md w-full md:w-auto"
+                  >
+                    ✕ Supprimer
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
