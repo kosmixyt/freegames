@@ -5,6 +5,8 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  Link,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -41,8 +43,59 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+function Sidebar() {
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
+
+  return (
+    <aside className="w-64 h-screen bg-gray-900 text-white border-l border-gray-700 fixed right-0 top-0 flex flex-col shadow-lg">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-700">
+        <h1 className="text-2xl font-bold">FreeGames</h1>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 p-6 space-y-3">
+        <Link
+          to="/"
+          className={`block px-4 py-2 rounded-md transition ${
+            isActive("/")
+              ? "bg-blue-600 text-white"
+              : "text-gray-300 hover:bg-gray-800"
+          }`}
+        >
+          Accueil
+        </Link>
+        <Link
+          to="/users"
+          className={`block px-4 py-2 rounded-md transition ${
+            isActive("/users")
+              ? "bg-blue-600 text-white"
+              : "text-gray-300 hover:bg-gray-800"
+          }`}
+        >
+          Utilisateurs
+        </Link>
+      </nav>
+
+      {/* Footer */}
+      <div className="p-6 border-t border-gray-700 text-sm text-gray-400">
+        <p>© 2025 FreeGames</p>
+      </div>
+    </aside>
+  );
+}
+
 export default function App() {
-  return <Outlet />;
+  return (
+    <div className="flex">
+      <main className="flex-1 mr-64 min-h-screen">
+        <Outlet />
+      </main>
+      <Sidebar />
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
